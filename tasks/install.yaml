@@ -17,12 +17,14 @@
   template:
     src: 'broker.init.j2'
     dest: '/etc/init.d/kafka-broker'
+    mode: '0755'
     force: yes
 
 - name: Copy zookeper init.d script
   template:
     src: 'zookeeper.init.j2'
     dest: '/etc/init.d/zookeeper'
+    mode: '0755'
     force: yes
 
 - name: Copy broker config file
@@ -51,3 +53,8 @@
     state: link
     src: '{{ kafka_install_dir }}/kafka/config/zookeeper.properties'
     dest: '/etc/kafka/zookeeper.properties'
+
+- name: Create log dir
+  file:
+    path: '{{ log_dirs }}'
+    state: directory
