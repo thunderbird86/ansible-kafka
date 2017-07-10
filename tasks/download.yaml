@@ -1,0 +1,34 @@
+---
+
+- name: Install tar
+  yum:
+    name: tar
+    state: latest
+
+
+- name: Check tmp dir
+  file: 
+    path: '{{ temp_dir }}'
+    state: directory
+
+# - set_fact:
+#     md5_value: '{{ item }}'
+#   with_url: '{{ kafka_md5_url }}'
+
+- name: Download kafka tar file
+  get_url:
+    url: '{{ kafka_download_url }}'
+    dest: '{{ temp_dir }}'
+    # checksum: 'md5:{{ md5_value }}'
+
+- name: Unpack kafka tar file
+  unarchive:
+    src: '{{ temp_dir}}/{{ kafka_archive }}'
+    dest: '{{ kafka_install_dir }}'
+    remote_src: True
+
+- name: Create symlink 
+  file:
+    state: link
+    src: '{{ kafka_install_dir }}/{{ kafka_name }}'
+    dest: '{{ kafka_install_dir }}/kafka'

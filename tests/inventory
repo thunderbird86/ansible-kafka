@@ -1,0 +1,3 @@
+# inventory
+[broker-srv]
+broker-srv1 image="chrismeyers/centos6"

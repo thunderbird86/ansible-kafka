@@ -1,0 +1,4 @@
+---
+- include: download.yaml
+- include: install.yaml
+- include: configure.yaml

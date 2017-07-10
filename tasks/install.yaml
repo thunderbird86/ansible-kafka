@@ -1,0 +1,53 @@
+---
+- name: Create group
+  user:
+    name: 'kafka'
+    state: present
+
+- name: Create user
+  user:
+    name: 'kafka'
+    group: 'kafka'
+    createhome: no
+    system: yes
+    shell: "/bin/false"
+    state: present
+
+- name: Copy broker init.d script
+  template:
+    src: 'broker.init.j2'
+    dest: '/etc/init.d/kafka-broker'
+    force: yes
+
+- name: Copy zookeper init.d script
+  template:
+    src: 'zookeeper.init.j2'
+    dest: '/etc/init.d/zookeeper'
+    force: yes
+
+- name: Copy broker config file
+  template:
+    src: 'server.properties.j2'
+    dest: '{{ kafka_install_dir }}/kafka/config/broker.properties'
+
+- name: Copy zookeeper config file
+  template:
+    src: 'zookeeper.properties.j2'
+    dest: '{{ kafka_install_dir }}/kafka/config/zookeeper.properties'
+
+- name: Check config dir
+  file: 
+    path: '/etc/kafka'
+    state: directory
+
+- name: Create broker properties symlink 
+  file:
+    state: link
+    src: '{{ kafka_install_dir }}/kafka/config/server.properties'
+    dest: '/etc/kafka/server.properties'
+
+- name: Create zookeeper properties symlink 
+  file:
+    state: link
+    src: '{{ kafka_install_dir }}/kafka/config/zookeeper.properties'
+    dest: '/etc/kafka/zookeeper.properties'

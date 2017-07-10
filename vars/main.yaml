@@ -1,0 +1,7 @@
+---
+#Kafka
+kafka_name: 'kafka_{{ kafka_scala_ver }}-{{ kafka_ver }}'
+kafka_archive: '{{ kafka_name }}.tgz'
+#URL's'
+kafka_download_url: '{{ kafka_repo_url }}/{{ kafka_ver }}/{{ kafka_archive }}'
+kafka_md5_url: '{{ kafka_repo_url }}/{{ kafka_ver }}/{{ kafka_archive }}.md5'
