@@ -12,7 +12,7 @@
 
 KAFKA_HOME="{{ kafka_install_dir }}/kafka"
 KAFKA_USER="kafka"
-KAFKA_SCRIPT"=$KAFKA_HOME/bin/zookeeper-server-start.sh"
+KAFKA_SCRIPT="${KAFKA_HOME}/bin/zookeeper-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/zookeeper.properties"
 KAFKA_CONSOLE_LOG="/var/log/kafka/zookeper-console.log"
 
@@ -67,8 +67,8 @@ start() {
                 let count=$count+1;
         done
   
-        success
-        echo
+        echo "$prog started"
+
         return 0
 }
 
@@ -96,8 +96,7 @@ stop() {
 
         rm -f $KAFKA_PIDFILE
         rm -f $KAFKA_CONSOLE_LOG
-        success
-        echo
+        echo "$prog stopped"
 }
 
 restart() {
