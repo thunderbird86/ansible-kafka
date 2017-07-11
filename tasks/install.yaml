@@ -10,7 +10,7 @@
     group: 'kafka'
     createhome: no
     system: yes
-    shell: "/bin/false"
+    shell: "/bin/bash"
     state: present
 
 - name: Copy broker init.d script
