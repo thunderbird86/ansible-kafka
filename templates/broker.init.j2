@@ -17,9 +17,10 @@ KAFKA_CONFIG="/etc/kafka/server.properties"
 KAFKA_CONSOLE_LOG="/var/log/kafka/console.log"
 
 #//TODO move to standalone file
-KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
+export KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
 
-EXTRA_ARGS="-name kafkaServer"
+export LOG_DIR=${KAFKA_CONSOLE_LOG}
+export EXTRA_ARGS="-name kafkaServer"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
@@ -54,7 +55,8 @@ start() {
   
         # Run daemon
         cd $KAFKA_HOME
-        nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &
+        # nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &
+        su ${KAFKA_USER} -с "nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
         PID=$!
         echo $PID > $KAFKA_PIDFILE
         
@@ -62,7 +64,7 @@ start() {
         launched=false
         
         sleep 3
-        
+
         until [ $count -gt $STARTUP_WAIT ]
         do
                 grep 'started' $KAFKA_CONSOLE_LOG > /dev/null

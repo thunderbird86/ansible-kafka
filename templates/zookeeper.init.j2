@@ -18,7 +18,7 @@ KAFKA_CONSOLE_LOG="/var/log/kafka/zookeper-console.log"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
-prog=kafka
+prog=zookeeper
 DESC="kafka daemon"
 
 RETVAL=0
@@ -58,7 +58,7 @@ start() {
   
         until [ $count -gt $STARTUP_WAIT ]
         do
-                grep 'started' $KAFKA_CONSOLE_LOG > /dev/null
+                grep 'binding to port' $KAFKA_CONSOLE_LOG > /dev/null
                 if [ $? -eq 0 ] ; then
                         launched=true
                         break
