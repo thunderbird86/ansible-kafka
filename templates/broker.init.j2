@@ -10,31 +10,34 @@
 # Short-Description: kafka
 ### END INIT INFO
 
-KAFKA_HOME="{{ kafka_install_dir }}/kafka"
+KAFKA_HOME="{{kafka_install_dir}}/kafka"
 KAFKA_USER="kafka"
 KAFKA_SCRIPT="${KAFKA_HOME}/bin/kafka-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/server.properties"
-KAFKA_CONSOLE_LOG="/var/log/kafka/console.log"
+KAFKA_LOG_DIR="{{ log_dirs }}"
+KAFKA_CONSOLE_LOG="${KAFKA_LOG_DIR}/brocker-console.log"
+KAFKA_PIDFILE="/var/run/kafka/brocker.pid"
 
-#//TODO move to standalone file
+# Source function library.
+. /etc/init.d/functions
+
+# Overwrite default kafka settings
 export KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
-
-export LOG_DIR=${KAFKA_CONSOLE_LOG}
+export LOG_DIR="${KAFKA_LOG_DIR}"
 export EXTRA_ARGS="-name kafkaServer"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
-prog=kafka
+prog="brocker"
 DESC="kafka daemon"
 
 RETVAL=0
 STARTUP_WAIT=30
 SHUTDOWN_WAIT=30
 
-KAFKA_PIDFILE=/var/run/kafka/kafka.pid
 
 start() {
-  echo -n $"Starting $prog: "
+  echo -n "Starting $prog: "
 
         # Create pid file
         if [ -f $KAFKA_PIDFILE ]; then
@@ -52,22 +55,21 @@ start() {
         rm -f $KAFKA_CONSOLE_LOG
         mkdir -p $(dirname $KAFKA_PIDFILE)
         chown $KAFKA_USER $(dirname $KAFKA_PIDFILE) || true
-  
+
         # Run daemon
         cd $KAFKA_HOME
-        # nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &
-        su ${KAFKA_USER} -с "nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
-        PID=$!
+
+        su ${KAFKA_USER} -c "$KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
+        PID=`pgrep -u kafka -n`
+
         echo $PID > $KAFKA_PIDFILE
-        
+
         count=0
         launched=false
-        
-        sleep 3
 
         until [ $count -gt $STARTUP_WAIT ]
         do
-                grep 'started' $KAFKA_CONSOLE_LOG > /dev/null
+                grep 'binding to port' $KAFKA_CONSOLE_LOG > /dev/null
                 if [ $? -eq 0 ] ; then
                         launched=true
                         break
@@ -75,14 +77,14 @@ start() {
                 sleep 1
                 let count=$count+1;
         done
-  
+        success
         echo "$prog started"
         return 0
 }
 
 
 stop() {
-        echo -n $"Stopping $prog: "
+        echo -n "Stopping $prog: "
         count=0;
 
         if [ -f $KAFKA_PIDFILE ]; then
@@ -104,7 +106,6 @@ stop() {
 
         rm -f $KAFKA_PIDFILE
         rm -f $KAFKA_CONSOLE_LOG
-    
         echo "$prog stopped"
 }
 
@@ -125,6 +126,7 @@ status() {
                 fi
         fi
         echo "$prog is not running"
+        success
         return 3
 }
 
@@ -153,5 +155,5 @@ status)
 echo $"Usage: $0 {start|stop|reload|restart|status}"
 exit 1
 esac
-  
+
 exit $?

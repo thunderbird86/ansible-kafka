@@ -10,7 +10,7 @@
 # Short-Description: kafka
 ### END INIT INFO
 
-KAFKA_HOME="{{ kafka_install_dir }}/kafka"
+KAFKA_HOME="{{kafka_install_dir}}/kafka"
 KAFKA_USER="kafka"
 KAFKA_SCRIPT="${KAFKA_HOME}/bin/zookeeper-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/zookeeper.properties"
@@ -22,14 +22,14 @@ KAFKA_PIDFILE="/var/run/kafka/zookeeper.pid"
 . /etc/init.d/functions
 
 # Overwrite default kafka settings
-export KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
+export KAFKA_HEAP_OPTS="-Xmx1G -Xms1G"
 export LOG_DIR="${KAFKA_LOG_DIR}"
 export EXTRA_ARGS="-name zookeeper"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
-prog=zookeeper
-DESC="kafka daemon"
+prog="zookeeper"
+DESC="zookeeper daemon"
 
 RETVAL=0
 STARTUP_WAIT=30
@@ -37,7 +37,7 @@ SHUTDOWN_WAIT=30
 
 
 start() {
-  echo -n $"Starting $prog: "
+  echo -n "Starting $prog: "
 
         # Create pid file
         if [ -f $KAFKA_PIDFILE ]; then
@@ -55,17 +55,18 @@ start() {
         rm -f $KAFKA_CONSOLE_LOG
         mkdir -p $(dirname $KAFKA_PIDFILE)
         chown $KAFKA_USER $(dirname $KAFKA_PIDFILE) || true
-  
+
         # Run daemon
         cd $KAFKA_HOME
 
-        su ${KAFKA_USER} -с "sh nohup $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
-        PID=$!
+        su ${KAFKA_USER} -c "$KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
+        PID=`pgrep -u kafka -n`
+
         echo $PID > $KAFKA_PIDFILE
-        
+
         count=0
         launched=false
-  
+
         until [ $count -gt $STARTUP_WAIT ]
         do
                 grep 'binding to port' $KAFKA_CONSOLE_LOG > /dev/null
@@ -83,7 +84,7 @@ start() {
 
 
 stop() {
-        echo -n $"Stopping $prog: "
+        echo -n "Stopping $prog: "
         count=0;
 
         if [ -f $KAFKA_PIDFILE ]; then
@@ -154,5 +155,5 @@ status)
 echo $"Usage: $0 {start|stop|reload|restart|status}"
 exit 1
 esac
-  
+
 exit $?
