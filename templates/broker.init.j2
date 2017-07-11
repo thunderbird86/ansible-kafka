@@ -15,8 +15,8 @@ KAFKA_USER="kafka"
 KAFKA_SCRIPT="${KAFKA_HOME}/bin/kafka-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/server.properties"
 KAFKA_LOG_DIR="{{ log_dirs }}"
-KAFKA_CONSOLE_LOG="${KAFKA_LOG_DIR}/brocker-console.log"
-KAFKA_PIDFILE="/var/run/kafka/brocker.pid"
+KAFKA_CONSOLE_LOG="${KAFKA_LOG_DIR}/broker-console.log"
+KAFKA_PIDFILE="/var/run/kafka/broker.pid"
 
 # Source function library.
 . /etc/init.d/functions
@@ -28,7 +28,7 @@ export EXTRA_ARGS="-name kafkaServer"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
-prog="brocker"
+prog="broker"
 DESC="kafka daemon"
 
 RETVAL=0
