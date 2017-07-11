@@ -14,7 +14,17 @@ KAFKA_HOME="{{ kafka_install_dir }}/kafka"
 KAFKA_USER="kafka"
 KAFKA_SCRIPT="${KAFKA_HOME}/bin/zookeeper-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/zookeeper.properties"
-KAFKA_CONSOLE_LOG="/var/log/kafka/zookeper-console.log"
+KAFKA_LOG_DIR="{{ log_dirs }}"
+KAFKA_CONSOLE_LOG="${KAFKA_LOG_DIR}/zookeper-console.log"
+KAFKA_PIDFILE="/var/run/kafka/zookeeper.pid"
+
+# Source function library.
+. /etc/init.d/functions
+
+# Overwrite default kafka settings
+export KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
+export LOG_DIR="${KAFKA_LOG_DIR}"
+export EXTRA_ARGS="-name zookeeper"
 
 PATH=/bin:/usr/bin:/sbin:/usr/sbin:/usr/local/bin
 
@@ -25,7 +35,6 @@ RETVAL=0
 STARTUP_WAIT=30
 SHUTDOWN_WAIT=30
 
-KAFKA_PIDFILE=/var/run/kafka/zookeeper.pid
 
 start() {
   echo -n $"Starting $prog: "
@@ -49,7 +58,8 @@ start() {
   
         # Run daemon
         cd $KAFKA_HOME
-        nohup sh $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &
+
+        su ${KAFKA_USER} -с "sh nohup $KAFKA_SCRIPT $KAFKA_CONFIG 2>&1 >> $KAFKA_CONSOLE_LOG 2>&1 &"
         PID=$!
         echo $PID > $KAFKA_PIDFILE
         
@@ -66,9 +76,8 @@ start() {
                 sleep 1
                 let count=$count+1;
         done
-  
+        success
         echo "$prog started"
-
         return 0
 }
 
@@ -116,6 +125,7 @@ status() {
                 fi
         fi
         echo "$prog is not running"
+        success
         return 3
 }
 

@@ -34,9 +34,11 @@ transaction_state_log_min_isr: 1
 log_flush_interval_messages: 10000
 log_flush_interval_ms: 1000
 
-# Log Retention Policy
+#Log Retention Policy
 log_retention_hours: 168
 log_retention_bytes: 1073741824
 log_segment_bytes: 1073741824
 log_retention_check_interval_ms: 300000
 
+#Zookeper
+zoo_data_dir: '/tmp/zookeper'

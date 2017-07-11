@@ -57,4 +57,13 @@
 - name: Create log dir
   file:
     path: '{{ log_dirs }}'
+    owner: 'kafka'
+    group: 'kafka'
     state: directory
+
+- name: Create zookeeper data directory
+  file:
+    path: '{{ zoo_data_dir }}'
+    owner: 'kafka'
+    group: 'kafka'
+    state:  directory
