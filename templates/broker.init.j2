@@ -106,6 +106,7 @@ stop() {
 
         rm -f $KAFKA_PIDFILE
         rm -f $KAFKA_CONSOLE_LOG
+        success
         echo "$prog stopped"
 }
 
@@ -126,7 +127,6 @@ status() {
                 fi
         fi
         echo "$prog is not running"
-        success
         return 3
 }
 
