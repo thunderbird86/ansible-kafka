@@ -30,7 +30,7 @@
 - name: Copy broker config file
   template:
     src: 'server.properties.j2'
-    dest: '{{ kafka_install_dir }}/kafka/config/broker.properties'
+    dest: '{{ kafka_install_dir }}/kafka/config/server.properties'
 
 - name: Copy zookeeper config file
   template:
