@@ -22,6 +22,7 @@ KAFKA_PIDFILE="/var/run/kafka/broker.pid"
 . /etc/init.d/functions
 
 # Overwrite default kafka settings
+export JMX_PORT="9999"
 export KAFKA_HEAP_OPTS="{{ kafka_jvm_opts }}"
 export LOG_DIR="${KAFKA_LOG_DIR}"
 export EXTRA_ARGS="-name kafkaServer"
