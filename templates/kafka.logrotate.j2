@@ -1,0 +1,43 @@
+{{ logs_dir }}/*.log
+{
+
+    # only keep last 2 compressed
+    rotate 2
+    size=1G
+
+    # managing timestamps
+    dateext
+    dateformat _%Y-%m-%d-%s
+
+    compress
+    nodelaycompress
+
+    nocopy
+    nocopytruncate
+    nocreate
+
+    missingok
+    notifempty
+}
+
+{{ logs_dir }}/*.log*[0-9][0-9]
+{
+    daily
+
+    # remove after compressed
+    rotate 5
+
+    # overwriting, if set elsewhere: these logs are already timestamp named
+    nodateext
+
+    compress
+    nodelaycompress
+
+    # Yes, I am just renaming by using '/bin/mv'
+    nocopy
+    nocopytruncate
+    nocreate
+
+    missingok
+    notifempty
+}

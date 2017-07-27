@@ -1,0 +1,6 @@
+- name: Copy logrotate config
+  template:
+    src: 'kafka.logrotate.j2'
+    dest: '/etc/logrotate.d/kafka'
+    mode: '0644'
+    force: yes

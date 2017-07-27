@@ -14,7 +14,7 @@ KAFKA_HOME="{{kafka_install_dir}}/kafka"
 KAFKA_USER="kafka"
 KAFKA_SCRIPT="${KAFKA_HOME}/bin/zookeeper-server-start.sh"
 KAFKA_CONFIG="/etc/kafka/zookeeper.properties"
-KAFKA_LOG_DIR="{{ log_dirs }}"
+KAFKA_LOG_DIR="{{ logs_dir }}"
 KAFKA_CONSOLE_LOG="${KAFKA_LOG_DIR}/zookeper-console.log"
 KAFKA_PIDFILE="/var/run/kafka/zookeeper.pid"
 
