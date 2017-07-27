@@ -56,7 +56,7 @@
 
 - name: Create log dir
   file:
-    path: '{{ log_dirs }}'
+    path: '{{ logs_dir }}'
     owner: 'kafka'
     group: 'kafka'
     state: directory
@@ -70,7 +70,7 @@
 
 - name: Create broker data directory
   file:
-    path: '{{ log_dir }}'
+    path: '{{ data_dir }}'
     owner: 'kafka'
     group: 'kafka'
     state:  directory
